@@ -1,0 +1,3 @@
+rootProject.name='HeadersRecyclerViewSample'
+include ':app'
+include ':headersrecyclerview'
