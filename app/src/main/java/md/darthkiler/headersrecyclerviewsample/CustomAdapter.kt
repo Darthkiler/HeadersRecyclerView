@@ -14,11 +14,7 @@ import md.darthkiler.headersrecyclerview.items.BannerItem
 import md.darthkiler.headersrecyclerview.items.HeaderItem
 import md.darthkiler.headersrecyclerview.items.Item
 
-class CustomAdapter(context: Context, private val list:List<Item>): HeadersRecyclerViewAdapter(context) {
-
-    override fun getList(): List<Item> {
-        return list
-    }
+class CustomAdapter(context: Context, list:List<Item>): HeadersRecyclerViewAdapter(list, context) {
 
     override fun getSortType(): SortType = SortType.LAST_MODIFY
 
@@ -59,6 +55,12 @@ class CustomAdapter(context: Context, private val list:List<Item>): HeadersRecyc
             itemView.appCompatCheckBox.isChecked = selected
         }
 
+    }
+
+    fun delete(adapterPosition: Int) {
+        deleteItem(adapterPosition)
+        notifyItemRemoved(adapterPosition)
+        L.show(getItemForPosition(adapterPosition))
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CustomHolder {

@@ -13,7 +13,7 @@ import md.darthkiler.headersrecyclerview.items.Item
 import md.darthkiler.headersrecyclerview.items.SortInterface
 import java.text.FieldPosition
 
-abstract class HeadersRecyclerViewAdapter(val context: Context): RecyclerView.Adapter<HeadersRecyclerViewAdapter.HeadersRecyclerViewHolder>() {
+abstract class HeadersRecyclerViewAdapter(private val list: List<Item>, val context: Context): RecyclerView.Adapter<HeadersRecyclerViewAdapter.HeadersRecyclerViewHolder>() {
 
     private var editMode = false
     private val selection = Selection()
@@ -32,7 +32,6 @@ abstract class HeadersRecyclerViewAdapter(val context: Context): RecyclerView.Ad
             selection.deselectAll()
     }
 
-    abstract fun getList(): List<Item>
     abstract fun getSortType(): SortType
     abstract fun getHeadersItems(): List<HeaderItem>
 
@@ -50,19 +49,21 @@ abstract class HeadersRecyclerViewAdapter(val context: Context): RecyclerView.Ad
 
     fun selectedCount(): Int = selection.selectedCount()
 
-    protected fun initList() {
-        val items: List<Item> = getList()
+    protected fun deleteItem(adapterPosition: Int) {
+        //учитывать что позиции с рекламой будут другие
+        fullList.removeAt(adapterPosition)
+    }
+
+    fun isEditMode() = editMode
+
+    private fun initList() {
         val sortType: SortType = getSortType()
         val headers: List<HeaderItem> = getHeadersItems()
-        L.show("context", context)
-        L.show("items", items)
-        L.show("sortType", sortType)
-        L.show("headers", headers)
         fullList.clear()
-        fullList.addAll(items)
+        fullList.addAll(list)
 
         selection.clear()
-        selection.initList(items)
+        selection.initList(list)
 
         fullList.addAll(headers)
 
@@ -117,8 +118,11 @@ abstract class HeadersRecyclerViewAdapter(val context: Context): RecyclerView.Ad
 
     abstract inner class HeadersRecyclerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
+        var viewType = ITEM
+
         fun bindItem(item: Item) {
-            itemView.setOnLongClickListener {
+            viewType = ITEM
+            /*itemView.setOnLongClickListener {
                 if (!editMode) {
                     if (adapterPosition != -1) {
                         selectItem(item)
@@ -126,7 +130,7 @@ abstract class HeadersRecyclerViewAdapter(val context: Context): RecyclerView.Ad
                     }
                 }
                 true
-            }
+            }*/
             onBindItem(item)
             if (editMode)
                 onOpenEditMode()
@@ -147,6 +151,7 @@ abstract class HeadersRecyclerViewAdapter(val context: Context): RecyclerView.Ad
         }
 
         fun bindHeader(headerItem: HeaderItem, itemsCount: Int) {
+            viewType = HEADER
             setItemsForHeaderCount(itemsCount)
             onBindHeader(headerItem)
         }
@@ -154,6 +159,8 @@ abstract class HeadersRecyclerViewAdapter(val context: Context): RecyclerView.Ad
         private fun setItemsForHeaderCount(count: Int) {
             itemView.findViewById<TextView>(getCounterId()).text = count.toString()
         }
+
+        fun isItem() = viewType == ITEM
 
         /*private fun bindBanner(bannerItem: BannerItem?) {
             onBindBanner(bannerItem)
