@@ -35,6 +35,20 @@ abstract class HeadersRecyclerViewAdapter(private val list: List<Item>, val cont
     abstract fun getSortType(): SortType
     abstract fun getHeadersItems(): List<HeaderItem>
 
+    private fun calculateElementForHeaders() {
+        var int = 0
+        for (i in fullList.size - 1 downTo 0)
+            if (fullList[i] is Item)
+                int++
+            else {
+                if (int == 0)
+                    fullList.removeAt(i)
+                else
+                    (fullList[i] as HeaderItem).itemsCount = int
+                int = 0
+            }
+    }
+
     fun selectAll() {
         selection.selectAll()
         notifyDataSetChanged()
@@ -52,6 +66,7 @@ abstract class HeadersRecyclerViewAdapter(private val list: List<Item>, val cont
     protected fun deleteItem(adapterPosition: Int) {
         //учитывать что позиции с рекламой будут другие
         fullList.removeAt(adapterPosition)
+        calculateElementForHeaders()
     }
 
     fun isEditMode() = editMode
@@ -68,6 +83,8 @@ abstract class HeadersRecyclerViewAdapter(private val list: List<Item>, val cont
         fullList.addAll(headers)
 
         fullList.sortByDescending { it.getLastModify() } //указать сорт бай
+
+        calculateElementForHeaders()
 
     }
 
@@ -93,7 +110,7 @@ abstract class HeadersRecyclerViewAdapter(private val list: List<Item>, val cont
         if (getItemViewType(position) == ITEM)
             holder.bindItem(getItemForPosition(position) as Item)
         if (getItemViewType(position) == HEADER)
-            holder.bindHeader(getItemForPosition(position) as HeaderItem, 5)
+            holder.bindHeader(getItemForPosition(position) as HeaderItem)
         /*if (getItemViewType(position) == BANNER)//добавить реализацию для клика банера
             holder.onBindBanner(null)*/
     }
@@ -150,9 +167,9 @@ abstract class HeadersRecyclerViewAdapter(private val list: List<Item>, val cont
             onItemSelectedStateChanged(selection.isSelected(item.getId()))
         }
 
-        fun bindHeader(headerItem: HeaderItem, itemsCount: Int) {
+        fun bindHeader(headerItem: HeaderItem) {
             viewType = HEADER
-            setItemsForHeaderCount(itemsCount)
+            setItemsForHeaderCount(headerItem.itemsCount)
             onBindHeader(headerItem)
         }
 
