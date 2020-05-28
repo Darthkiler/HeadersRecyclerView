@@ -5,7 +5,7 @@ import androidx.recyclerview.widget.RecyclerView
 import darthkilersprojects.com.log.L
 import md.darthkiler.headersrecyclerview.HeadersRecyclerViewAdapter
 
-abstract class SwipeUtils(swipeLeft: Boolean, swipeRight: Boolean, private val adapter: HeadersRecyclerViewAdapter): ItemTouchHelper.SimpleCallback(0,
+abstract class SwipeUtils(swipeLeft: Boolean, swipeRight: Boolean): ItemTouchHelper.SimpleCallback(0,
     if (swipeLeft && swipeRight)
         ItemTouchHelper.START or ItemTouchHelper.END
     else if (swipeLeft)
@@ -22,10 +22,10 @@ abstract class SwipeUtils(swipeLeft: Boolean, swipeRight: Boolean, private val a
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
         if (direction == ItemTouchHelper.START) {
-            onSwipeLeft(adapter, viewHolder.adapterPosition)
+            onSwipeLeft(viewHolder.adapterPosition)
         }
         if (direction == ItemTouchHelper.END) {
-            onSwipeRight(adapter, viewHolder.adapterPosition)
+            onSwipeRight(viewHolder.adapterPosition)
         }
     }
 
@@ -43,7 +43,7 @@ abstract class SwipeUtils(swipeLeft: Boolean, swipeRight: Boolean, private val a
             0
     }
 
-    abstract fun onSwipeLeft(adapter: HeadersRecyclerViewAdapter, adapterPosition: Int)
-    abstract fun onSwipeRight(adapter: HeadersRecyclerViewAdapter, adapterPosition: Int)
+    abstract fun onSwipeLeft(adapterPosition: Int)
+    abstract fun onSwipeRight(adapterPosition: Int)
 
 }
