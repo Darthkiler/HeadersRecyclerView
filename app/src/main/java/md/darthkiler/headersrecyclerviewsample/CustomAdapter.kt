@@ -59,8 +59,7 @@ class CustomAdapter(context: Context, list:List<Item>): HeadersRecyclerViewAdapt
 
     fun delete(adapterPosition: Int) {
         deleteItem(adapterPosition)
-        notifyItemRemoved(adapterPosition)
-        L.show(getItemForPosition(adapterPosition))
+        //notifyItemRemoved(adapterPosition)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CustomHolder {

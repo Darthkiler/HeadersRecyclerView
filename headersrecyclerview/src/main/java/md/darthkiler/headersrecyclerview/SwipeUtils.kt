@@ -37,7 +37,7 @@ abstract class SwipeUtils(swipeLeft: Boolean, swipeRight: Boolean, private val a
         recyclerView: RecyclerView,
         viewHolder: RecyclerView.ViewHolder
     ): Int {
-        return if((viewHolder as HeadersRecyclerViewAdapter.HeadersRecyclerViewHolder).isItem() && !(recyclerView.adapter as HeadersRecyclerViewAdapter).isEditMode())
+        return if((viewHolder as HeadersRecyclerViewAdapter.HeadersRecyclerViewHolder).isItem()/* && !(recyclerView.adapter as HeadersRecyclerViewAdapter).isEditMode()*/)
             super.getSwipeDirs(recyclerView, viewHolder)
         else
             0

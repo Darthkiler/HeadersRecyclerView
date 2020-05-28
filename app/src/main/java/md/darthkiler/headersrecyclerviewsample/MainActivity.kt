@@ -62,7 +62,7 @@ class MainActivity : AppCompatActivity() {
     private fun initList(): List<CustomItem> {
         val list: ArrayList<CustomItem> = arrayListOf()
 
-        for (i in 0..111)
+        for (i in 0..6)
             list.add(CustomItem(i, when (Random().nextInt(3)) {
                 0 -> (System.currentTimeMillis() - 1000L)
                 1 -> (System.currentTimeMillis() - 86400000)

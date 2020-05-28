@@ -11,12 +11,13 @@ import md.darthkiler.headersrecyclerview.items.BannerItem
 import md.darthkiler.headersrecyclerview.items.HeaderItem
 import md.darthkiler.headersrecyclerview.items.Item
 import md.darthkiler.headersrecyclerview.items.SortInterface
+import java.lang.RuntimeException
 import java.text.FieldPosition
 
 abstract class HeadersRecyclerViewAdapter(private val list: List<Item>, val context: Context): RecyclerView.Adapter<HeadersRecyclerViewAdapter.HeadersRecyclerViewHolder>() {
 
-    private var editMode = false
-    private val selection = Selection()
+    //private var editMode = false
+    //private val selection = Selection()
     private val fullList: ArrayList<SortInterface> = ArrayList()
 
     var onClickListener: OnClickListener? = null
@@ -25,12 +26,12 @@ abstract class HeadersRecyclerViewAdapter(private val list: List<Item>, val cont
         initList()
     }
 
-    fun changeEditMode(isOpen: Boolean) {//сделать абстрактным
+    /*fun changeEditMode(isOpen: Boolean) {//сделать абстрактным
         editMode = isOpen
         notifyDataSetChanged()
         if (!editMode)
             selection.deselectAll()
-    }
+    }*/
 
     abstract fun getSortType(): SortType
     abstract fun getHeadersItems(): List<HeaderItem>
@@ -49,7 +50,7 @@ abstract class HeadersRecyclerViewAdapter(private val list: List<Item>, val cont
             }
     }
 
-    fun selectAll() {
+    /*fun selectAll() {
         selection.selectAll()
         notifyDataSetChanged()
     }
@@ -61,15 +62,28 @@ abstract class HeadersRecyclerViewAdapter(private val list: List<Item>, val cont
 
     fun isAllSelected(): Boolean = selection.isAllSelected()
 
-    fun selectedCount(): Int = selection.selectedCount()
+    fun selectedCount(): Int = selection.selectedCount()*/
 
     protected fun deleteItem(adapterPosition: Int) {
         //учитывать что позиции с рекламой будут другие
-        fullList.removeAt(adapterPosition)
+        val headerPosition = getHeaderForPosition(adapterPosition)
+        val item = fullList.removeAt(adapterPosition) as Item
+        notifyItemRemoved(adapterPosition)
+        notifyItemChanged(headerPosition)
+        deleteHeaderIfNeed(headerPosition)
+        //selection.removeKey(item.getId())
+
         calculateElementForHeaders()
     }
 
-    fun isEditMode() = editMode
+    private fun getHeaderForPosition(listPosition: Int): Int {
+        for (i in listPosition downTo 0)
+            if (fullList[i] is HeaderItem)
+                return i
+        return -1
+    }
+
+    //fun isEditMode() = editMode
 
     private fun initList() {
         val sortType: SortType = getSortType()
@@ -77,8 +91,8 @@ abstract class HeadersRecyclerViewAdapter(private val list: List<Item>, val cont
         fullList.clear()
         fullList.addAll(list)
 
-        selection.clear()
-        selection.initList(list)
+        /*selection.clear()
+        selection.initList(list)*/
 
         fullList.addAll(headers)
 
@@ -88,19 +102,28 @@ abstract class HeadersRecyclerViewAdapter(private val list: List<Item>, val cont
 
     }
 
-    fun selectItem(item: Item) {
+    /*fun selectItem(item: Item) {
         if (selection.isSelected(item.getId()))
             selection.deselect(item.getId())
         else
             selection.select(item.getId())
+    }*/
+
+    private fun deleteHeaderIfNeed(adapterPosition: Int) {
+        if (fullList[adapterPosition] !is HeaderItem)
+            throw RuntimeException("Oops!…")
+        if (adapterPosition + 1 == fullList.size || fullList[adapterPosition + 1] is HeaderItem) {
+            fullList.removeAt(adapterPosition)
+            notifyItemRemoved(adapterPosition)
+        }
     }
 
     fun onBackPressed(): Boolean {
-        if (!editMode)
+        /*if (!editMode)*/
             return true
-        if (editMode)
+        /*if (editMode)
             changeEditMode(false)
-        return false
+        return false*/
     }
 
     fun getItemForPosition(adapterPosition: Int): SortInterface = fullList[adapterPosition]
@@ -149,22 +172,22 @@ abstract class HeadersRecyclerViewAdapter(private val list: List<Item>, val cont
                 true
             }*/
             onBindItem(item)
-            if (editMode)
+            /*if (editMode)
                 onOpenEditMode()
             else
-                onCloseEditMode()
+                onCloseEditMode()*/
 
             itemView.setOnClickListener {
                 if (adapterPosition != -1) {
-                    if (editMode) {
+                    /*if (editMode) {
                         selectItem(item)
                         notifyItemChanged(adapterPosition)
                     }
-                    else
+                    else*/
                         onClickListener?.onClick(item)
                 }
             }
-            onItemSelectedStateChanged(selection.isSelected(item.getId()))
+            //onItemSelectedStateChanged(selection.isSelected(item.getId()))
         }
 
         fun bindHeader(headerItem: HeaderItem) {
